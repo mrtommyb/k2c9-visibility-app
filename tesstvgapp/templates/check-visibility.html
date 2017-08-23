@@ -25,7 +25,7 @@
       <!-- Example row of columns -->
       <div class="row">
         <div class="col-md-12">
-          <h1>K2C9 Visibility Tool</h1>
+          <h1>TESS Visibility Tool</h1>
           <hr>
           <div class="row">
             <div class="col-lg-12">
@@ -33,10 +33,10 @@
             {% if pos_split|count == 1 %}
               {% if in_region[0] %}
                 <div class="alert alert-success"><b>Good news! =)</b><br>
-                The position is being observed by K2.</div>
+                The target may be observable by TESS during Cycle 1.</div>
               {% else %}
                 <div class="alert alert-danger" role="alert"><b>Oh snap! =(</b><br>
-                The position does not fall inside the K2C9 superstamp.</div>
+                The target is not observable by TESS during Cycle 1.</div>
               {% endif %}
 
             {% else %}
@@ -76,8 +76,8 @@
 
       <footer>
         <p>
-          Created by Geert Barentsen, Tom Barclay, &amp; Radek Poleski.<br/>
-          <a href="https://github.com/barentsen/k2c9-visibility-app">https://github.com/barentsen/k2c9-visibility-app</a>
+          Created by Tom Barclay &amp; Geert Barentsen.<br/>
+          <a href="https://github.com/mrtommyb/k2c9-visibility-app">https://github.com/mrtommyb/k2c9-visibility-app</a>
         </p>
       </footer>
     </div> <!-- /container -->        

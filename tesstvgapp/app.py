@@ -4,16 +4,16 @@ matplotlib.use('Agg')
 import flask
 from flask import Flask, request
 from astropy.coordinates import SkyCoord
+from mpl_toolkits.basemap import Basemap
 
 try:
     from io import BytesIO  # Python 3
 except ImportError:
     from cStringIO import StringIO as BytesIO  # Legacy Python
 
-from K2fov import c9
+import tvguide
 
-
-c9app = Flask('k2c9app', static_url_path='')
+tvgapp = Flask('tesstvgapp', static_url_path='')
 
 
 def _parse_single_pos(pos):
@@ -40,26 +40,32 @@ def _parse_pos(pos):
                    for single_pos in pos.split(",")]
     return positions
 
+def _isobservable(ra, dec):
+    """is target observable by TESS is cycle 1"""
+    tobj = tvguide.TessPointing(ra, dec)
+    if tobj.is_observable() == 2:
+        return True
+    else:
+        return False
 
 def _in_region(pos):
     """Returns a list of booleans."""
     positions = _parse_pos(pos)
-    return [c9.inMicrolensRegion(poscrd.ra.deg, poscrd.dec.deg)
+    return [_isobservable(poscrd.ra.deg, poscrd.dec.deg)
             for poscrd in positions]
 
-
-@c9app.route('/')
+@tvgapp.route('/')
 def root():
-    return c9app.send_static_file('index.html')
+    return tvgapp.send_static_file('index.html')
 
 
-@c9app.route('/demo')
+@tvgapp.route('/demo')
 def demo():
-    return flask.redirect("check-visibility?pos=270.0 -28.0,270.5 -28.2")
+    return flask.redirect("check-visibility?pos=234.56 -78.9,270.5 -28.2")
 
 
-@c9app.route('/in-microlens-region')
-def in_microlens_region():
+@tvgapp.route('/in-tess-fov')
+def in_tess_fov():
     pos = request.args.get('pos', default=None, type=str)
     fmt = request.args.get('fmt', default=None, type=str)
     input_strings = pos.split(",")
@@ -82,7 +88,7 @@ def in_microlens_region():
     return flask.Response(csv, mimetype='text/plain')
 
 
-@c9app.route('/check-visibility')
+@tvgapp.route('/check-visibility')
 def check_visibility():
     pos = request.args.get('pos', default=None, type=str)
     try:
@@ -100,8 +106,8 @@ def check_visibility():
                                  in_region=_in_region(pos))
 
 
-@c9app.route('/k2c9.png')
-def k2c9_png():
+@tvgapp.route('/tesstvguide.png')
+def tesstvguide():
     # The user may optionally mark a position
     pos = request.args.get('pos', default=None, type=str)
     size = request.args.get('size', default=None, type=float)
@@ -129,8 +135,8 @@ def k2c9_png():
                       numpoints=1, scatterpoints=1)
 
     if len(positions) > 0 and size is not None:
-        fovplot.ax.set_xlim([max(ra) + size/2., min(ra) - size/2.])
-        fovplot.ax.set_ylim([min(dec) - size/2., max(dec) + size/2.])
+        fovplot.ax.set_xlim([max(ra) + size / 2., min(ra) - size / 2.])
+        fovplot.ax.set_ylim([min(dec) - size / 2., max(dec) + size / 2.])
 
     img = BytesIO()
     fovplot.fig.savefig(img)
