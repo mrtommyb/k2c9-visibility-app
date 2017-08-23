@@ -71,22 +71,22 @@
                   <div id="collapseOne" class="panel-collapse collapse in">
                       <div class="panel-body">
                         <p>
-                        <b>/in-microlens-region?pos={POS}</b>
-                        [<a href="/in-microlens-region?pos=270.0 -28.0">example</a>]<br/>
-                        Returns "yes" if the sky coordinate specified by <i>POS</i> is being observed by K2 during Campaign 9,
+                        <b>/check-visibility?pos={POS}</b>
+                        [<a href="/check-visibility?pos=270.0 -28.0">example</a>]<br/>
+                        Returns "yes" if the sky coordinate specified by <i>POS</i> is observeable by TESS in Cycle 1,
                         "no" otherwise. <i>POS</i> must be a string specifying a sky coordinate in decimal
                         or sexagesimal format, e.g. "270.0 -28.0", "18h00m00s -28d00m00s", or "18:00:00 -28:00:00".
                         You can supply multiple coordinates separated by commas.
                         </p>
                         
-                        <p>
+<!--                         <p>
                         <b>/k2c9.png?pos={POS}&amp;size={SIZE}</b>
                         [<a href="/k2c9.png?pos=270.0%20-28.0,270.5%20-28.2&size=3">example</a>]<br/>
                         Returns a plot showing the K2C9 footprint.
                         Optionally, the coordinate specified by <i>POS</i> can be marked,
                         and the spatial extent of the plot can be specified to be <i>SIZE</i> degrees.
                         See above for the formatting of <i>POS</i>.
-                        </p>
+                        </p> -->
                       </div>
                   </div>
               </div>
@@ -100,8 +100,8 @@
 
       <footer>
         <p>
-          Created by Geert Barentsen, Tom Barclay, &amp; Radek Poleski.<br/>
-          <a href="https://github.com/barentsen/k2c9-visibility-app">https://github.com/barentsen/k2c9-visibility-app</a>
+          Created by Tom Barclay &amp; Geert Barentsen<br/>
+          <a href="https://github.com/mrtommyb/tess-visibility-app">https://github.com/mrtommyb/tess-visibility-app</a>
         </p>
       </footer>
     </div> <!-- /container -->        

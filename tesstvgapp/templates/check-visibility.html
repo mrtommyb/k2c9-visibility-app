@@ -33,7 +33,14 @@
             {% if pos_split|count == 1 %}
               {% if in_region[0] %}
                 <div class="alert alert-success"><b>Good news! =)</b><br>
-                The target may be observable by TESS during Cycle 1.</div>
+                The target may be observable by TESS during Cycle 1.<br>
+                {% if camera[0] != 0 %}
+                  Looks like it falls into camera {{camera[0]}}.<br>
+                  Each sector is 27.4 days, we can observe this source for a maximum of {{maxsect[0]}} sectors.
+                {% else %}
+                  Looks like it may fall into gap between cameras, but you should still propose this target because the final pointing is not finalized.
+                {% endif %}
+                </div>
               {% else %}
                 <div class="alert alert-danger" role="alert"><b>Oh snap! =(</b><br>
                 The target is not observable by TESS during Cycle 1.</div>
@@ -43,7 +50,7 @@
             <table class="table table-striped" style="width: auto !important;">
               <thead>
                 <tr>
-                  <th>Position</th><th>Visible?</th>
+                  <th>Position</th><th>Visible?</th><th>Camera</th><th>Max Sectors</th>
                 </tr>
               </thead>
               <tbody>
@@ -51,7 +58,8 @@
                   {% if in_region[idx] %}<tr class="success">{% else %}<tr>{% endif %}
                     <td>{{pos_split[idx]}}</td>
                     <td>{% if in_region[idx] %}yes{% else %}no{% endif %}</td>
-                  </tr>
+                    <td>{% if in_region[idx] %}{{camera[idx]}}{% else %}-{% endif %}</td>
+                    <td>{% if in_region[idx] %}{{maxsect[idx]}}{% else %}0{% endif %}</td>
                 {% endfor %}
               </tbody>
             </table>
@@ -77,7 +85,7 @@
       <footer>
         <p>
           Created by Tom Barclay &amp; Geert Barentsen.<br/>
-          <a href="https://github.com/mrtommyb/k2c9-visibility-app">https://github.com/mrtommyb/k2c9-visibility-app</a>
+          <a href="https://github.com/mrtommyb/tessvisibility-app">https://github.com/mrtommyb/tess-visibility-app</a>
         </p>
       </footer>
     </div> <!-- /container -->        

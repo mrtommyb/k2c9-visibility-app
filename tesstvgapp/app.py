@@ -48,6 +48,35 @@ def _isobservable(ra, dec):
     else:
         return False
 
+def _camera(ra, dec):
+    "which camera is the target on?"
+    tobj = tvguide.TessPointing(ra, dec)
+    if _isobservable(ra, dec):
+        return tobj.get_camera(fallback=True)
+    else:
+        return 0
+
+def _getcamera(pos):
+    """returns a list of cameras"""
+    positions = _parse_pos(pos)
+    return [_camera(poscrd.ra.deg, poscrd.dec.deg)
+            for poscrd in positions]
+
+def _sectors(ra, dec):
+    "which camera is the target on?"
+    tobj = tvguide.TessPointing(ra, dec)
+    if _isobservable(ra, dec):
+        return tobj.get_maxminmedave()[0]
+    else:
+        return 0
+
+def _getmaxsect(pos):
+    """returns a list of cameras"""
+    positions = _parse_pos(pos)
+    return [_sectors(poscrd.ra.deg, poscrd.dec.deg)
+            for poscrd in positions]
+
+
 def _in_region(pos):
     """Returns a list of booleans."""
     positions = _parse_pos(pos)
@@ -103,7 +132,9 @@ def check_visibility():
                                  positions=positions,
                                  pos_hmsdms=pos_hmsdms,
                                  pos_decimal=pos_decimal,
-                                 in_region=_in_region(pos))
+                                 in_region=_in_region(pos),
+                                 camera=_getcamera(pos),
+                                 maxsect=_getmaxsect(pos))
 
 
 @tvgapp.route('/tesstvguide.png')
