@@ -6,4 +6,4 @@ jinja2
 werkzeug
 gunicorn
 tvguide
-# basemap - not sure how
+basemap # need to heroku config:set BUILD_WITH_GEO_LIBRARIES=1
