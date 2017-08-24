@@ -1,6 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
-
+import matplotlib.pyplot as plt
 import flask
 from flask import Flask, request
 from astropy.coordinates import SkyCoord
@@ -83,6 +83,24 @@ def _in_region(pos):
     return [_isobservable(poscrd.ra.deg, poscrd.dec.deg)
             for poscrd in positions]
 
+def visplot(pos):
+    with plt.style.context('seaborn-paper'):
+        fig, ax1 = plt.subplots(1,1, figsize=[5,5])
+        m = Basemap(projection='ortho',lon_0=0,lat_0=-90,resolution='l', ax=ax1)
+        for position in pos:
+            eclpos = position.barycentrictrueecliptic
+            m.scatter(eclpos.lon.value, eclpos.lat.value, lw=1, edgecolor='w',
+                     s=50.0, alpha=1, latlon=True, zorder=100, color='orange')
+
+        parallels = [-78., -54., -30, -6., 6, 30, 54, 78, ]
+        m.drawparallels(parallels, latmax=78, latmin=-78)
+        meridians = np.linspace(240-12,360+240-12,14)[:-1]
+        m.drawmeridians(meridians,)
+        ax1.set_title('Southern Ecliptic Hemisphere')
+        fig.tight_layout()
+    return fig
+
+
 @tvgapp.route('/')
 def root():
     return tvgapp.send_static_file('index.html')
@@ -137,7 +155,7 @@ def check_visibility():
                                  maxsect=_getmaxsect(pos))
 
 
-@tvgapp.route('/tesstvguide.png')
+@tvgapp.route('/tessvis.png')
 def tesstvguide():
     # The user may optionally mark a position
     pos = request.args.get('pos', default=None, type=str)
@@ -145,32 +163,32 @@ def tesstvguide():
 
     positions = _parse_pos(pos)
     # Create the plot
-    fovplot = c9.C9FootprintPlot()
-    superstamp_patches, channel_patches = fovplot.plot_outline()
-    fovplot.fig.tight_layout()
-    if len(positions) > 0:
-        ra = [poscrd.ra.deg for poscrd in positions]
-        dec = [poscrd.dec.deg for poscrd in positions]
-        user_position = fovplot.ax.scatter(ra, dec,
-                                           marker='+', lw=2.5, s=200,
-                                           zorder=900, color="k")
-        legend_objects = (user_position, superstamp_patches[0][0])
-        legend_labels = ("Your position", "K2C9 Observations")
-    else:
-        legend_objects = (superstamp_patches[0][0],)
-        legend_labels = ("K2C9 Observations",)
-    fovplot.ax.legend(legend_objects, legend_labels,
-                      bbox_to_anchor=(0.1, 1., 1., 0.), loc=3,
-                      ncol=len(legend_objects), borderaxespad=0.,
-                      handlelength=0.8, frameon=False,
-                      numpoints=1, scatterpoints=1)
+    fovplot = visplot(positions)
+    # superstamp_patches, channel_patches = fovplot.plot_outline()
+    # fovplot.fig.tight_layout()
+    # if len(positions) > 0:
+    #     ra = [poscrd.ra.deg for poscrd in positions]
+    #     dec = [poscrd.dec.deg for poscrd in positions]
+    #     user_position = fovplot.ax.scatter(ra, dec,
+    #                                        marker='+', lw=2.5, s=200,
+    #                                        zorder=900, color="k")
+    #     legend_objects = (user_position, superstamp_patches[0][0])
+    #     legend_labels = ("Your position", "K2C9 Observations")
+    # else:
+    #     legend_objects = (superstamp_patches[0][0],)
+    #     legend_labels = ("K2C9 Observations",)
+    # fovplot.ax.legend(legend_objects, legend_labels,
+    #                   bbox_to_anchor=(0.1, 1., 1., 0.), loc=3,
+    #                   ncol=len(legend_objects), borderaxespad=0.,
+    #                   handlelength=0.8, frameon=False,
+    #                   numpoints=1, scatterpoints=1)
 
-    if len(positions) > 0 and size is not None:
-        fovplot.ax.set_xlim([max(ra) + size / 2., min(ra) - size / 2.])
-        fovplot.ax.set_ylim([min(dec) - size / 2., max(dec) + size / 2.])
+    # if len(positions) > 0 and size is not None:
+    #     fovplot.ax.set_xlim([max(ra) + size / 2., min(ra) - size / 2.])
+    #     fovplot.ax.set_ylim([min(dec) - size / 2., max(dec) + size / 2.])
 
     img = BytesIO()
-    fovplot.fig.savefig(img)
+    fovplot.savefig(img)
     img.seek(0)
     response = flask.send_file(img, mimetype="image/png")
     return response
