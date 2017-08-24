@@ -15,10 +15,11 @@ RUN pip install -r /tmp/requirements.txt
 
 # Add our code
 ADD ./tesstvgapp /opt/tesstvgapp/
-WORKDIR /opt/tesstvgapp
+WORKDIR /opt
 
 # RUN conda install scikit-learn
 
 RUN conda install -c anaconda basemap 
 
-CMD gunicorn --bind 0.0.0.0:$PORT wsgi
+#CMD gunicorn --bind 0.0.0.0:$PORT wsgi
+CMD ["gunicorn","tesstvgapp.app:tvgapp","--log-file -"]
