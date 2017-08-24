@@ -2,7 +2,7 @@ local:
 	heroku local
 
 deploy:
-	git push heroku master
+	heroku container:push web
 
 setup:
 	heroku apps:create tesstvgapp
