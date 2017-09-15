@@ -10,3 +10,8 @@ I probably forgot some things but here are some useful peices of informaiton
 * You need to install docker locally
 * the docker file is based on the miniconda one found at https://github.com/heroku-examples/python-miniconda/blob/master/Dockerfile
 * The instructions for using docker with Heroku were found at https://devcenter.heroku.com/articles/container-registry-and-runtime
+
+
+to deploy: heroku container:push web
+
+
