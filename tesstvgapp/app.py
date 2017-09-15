@@ -5,6 +5,7 @@ import flask
 from flask import Flask, request
 from astropy.coordinates import SkyCoord
 from mpl_toolkits.basemap import Basemap
+import numpy as np
 
 try:
     from io import BytesIO  # Python 3
@@ -85,19 +86,20 @@ def _in_region(pos):
 
 def visplot(pos):
     with plt.style.context('seaborn-paper'):
-        fig, ax1 = plt.subplots(1,1, figsize=[5,5])
-        m = Basemap(projection='ortho',lon_0=0,lat_0=-90,resolution='l', ax=ax1)
+        fig, ax1 = plt.subplots(1,1, figsize=[4.5,4.5])
+        m = Basemap(projection='ortho',lon_0=0,lat_0=-90,resolution='l', 
+            ax=ax1, celestial=True)
         for position in pos:
             eclpos = position.barycentrictrueecliptic
             m.scatter(eclpos.lon.value, eclpos.lat.value, lw=1, edgecolor='w',
                      s=50.0, alpha=1, latlon=True, zorder=100, color='orange')
 
-        parallels = [-78., -54., -30, -6., 6, 30, 54, 78, ]
-        m.drawparallels(parallels, latmax=78, latmin=-78)
+        parallels = [-78., -54., -30, -6.]#, 6, 30, 54, 78, ]
+        m.drawparallels(parallels,latmax=78)
         meridians = np.linspace(240-12,360+240-12,14)[:-1]
-        m.drawmeridians(meridians,)
+        m.drawmeridians(meridians, latmax=78)
         ax1.set_title('Southern Ecliptic Hemisphere')
-        fig.tight_layout()
+        # fig.tight_layout()
     return fig
 
 
@@ -165,7 +167,7 @@ def tesstvguide():
     # Create the plot
     fovplot = visplot(positions)
     # superstamp_patches, channel_patches = fovplot.plot_outline()
-    # fovplot.fig.tight_layout()
+    fovplot.tight_layout()#rect=[0.1, 0.1, 0.9, 0.9])
     # if len(positions) > 0:
     #     ra = [poscrd.ra.deg for poscrd in positions]
     #     dec = [poscrd.dec.deg for poscrd in positions]
@@ -188,7 +190,7 @@ def tesstvguide():
     #     fovplot.ax.set_ylim([min(dec) - size / 2., max(dec) + size / 2.])
 
     img = BytesIO()
-    fovplot.savefig(img)
+    fovplot.savefig(img, dpi=150)
     img.seek(0)
     response = flask.send_file(img, mimetype="image/png")
     return response

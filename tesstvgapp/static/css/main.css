@@ -6,7 +6,9 @@
 
 
 
-
+input[type="file"] {
+  line-height: 1ex;
+}
 
 
 

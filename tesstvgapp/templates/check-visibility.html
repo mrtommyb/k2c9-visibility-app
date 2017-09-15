@@ -28,7 +28,7 @@
           <h1>TESS Visibility Tool</h1>
           <hr>
           <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-6">
 
             {% if pos_split|count == 1 %}
               {% if in_region[0] %}
@@ -66,14 +66,11 @@
             {% endif %}
 
             </div>
-          </div>
+<!--           </div>
 
-          <div class="row">
+          <div class="row"> -->
             <div class="col-lg-6">
               <a href="tessvis.png?pos={{pos}}"><img src="tessvis.png?pos={{pos}}" class="img-responsive"></a>
-            </div>
-            <div class="col-lg-6">
-              <a href="tessvis.png?pos={{pos}}&size=0.5"><img src="tessvis.png?pos={{pos}}&size=0.5" class="img-responsive"></a>
             </div>
           </div>
 
